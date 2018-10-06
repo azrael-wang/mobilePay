@@ -20,28 +20,29 @@
         <span class="title">注册</span>
     </header>
     <div class="cz_container">
-        <div class="form_box">
-            <div class="mui-input-row">
-                <input name="mobile" type="text" placeholder="手机号">
-            </div>
-            <div class="mui-input-row">
-                <input name="pass" type="password" placeholder="密码" class="mui-input-password">
-                <span class="mui-icon mui-icon-eye"></span>
-            </div>
-            <div class="mui-input-row">
-                <input name="rePass" type="password" placeholder="确认密码" class="mui-input-password">
-                <span class="mui-icon mui-icon-eye"></span>
-            </div>
-            <div class="mui-input-row">
-                <input name="code" type="text" placeholder="认证码">
-                <a href="javascript:;" class="btn_getCode mui-btn mui-btn-primary" >获取认证码</a>
-            </div>
-            <a href="index.html" class="mui-btn mui-btn-primary btn_login">注册</a>
-            <div class="mui-input-row cz_text">
-                <input type="checkbox" checked/> 我同意《会员服务协议》
-                <a href="login.html">立即登录</a>
-            </div>
-        </div>
+      <form action="" class = "confirm">
+            <div class="form_box">
+                    <div class="mui-input-row">
+                            <input name="username" type="text" placeholder="用户名">
+                        </div>
+                    <div class="mui-input-row">
+                        <input class ="phoneNumber" name="mobile" type="text" placeholder="手机号">
+                    </div>
+                    <div class="mui-input-row">
+                        <input name="password" type="password" placeholder="密码" class="mui-input-password">
+                        <span class="mui-icon mui-icon-eye"></span>
+                    </div>
+                    <div class="mui-input-row">
+                        <input name="vCode"  type="text" placeholder="认证码">
+                        <a href="javascript:;" class="btn_getCode mui-btn mui-btn-primary" >获取认证码</a>
+                    </div>
+                    <button type ="submit" class="mui-btn mui-btn-primary btn_login">注册</button>
+                    <div class="mui-input-row cz_text">
+                        <input type="checkbox" checked/> 我同意《会员服务协议》
+                        <a href="login.html">立即登录</a>
+                    </div>
+                </div>
+      </form>
     </div>
     <footer class="cz_tabs">
         <a class="tab_home fa fa-home" href="../index.html"><span>首页</span></a>
@@ -51,5 +52,57 @@
     </footer>
 </div>
 <script src="../res/mui/js/mui.min.js"></script>
+<script  src="../js/jquery.min.js"></script>
+<script>
+        // *******如果修改后台数据必须重启后台服务器才会有效
+        // 1.获取用户输入的表单数据
+        // 2.提交表单数据到后端发服务器
+        // 3.等待服务器回应
+        $('.confirm').on('submit',function(e){
+            // 当触发sbmit事件的时候页面会自动提交，浏览器默认提交方式
+            // 为get他会将获取的内容添加到url后面，我们不希望使用这种默认方式
+            // 我们需要使用ajax所以我们需要阻止默认时间。
+            // 方法1.使用事件对象.e.preventDefault;
+            // 方法2.使用return false ; 阻止了默认事件的同时也跳出了当前函数。
+            e.preventDefault()
+            var data = $(this).serialize();
+           $.ajax({
+               url:"/node_js/user/register",
+               type:"post",
+               data:data,
+               success:function (res){
+                   console.log(res)
+                if(res.success){
+                     location.href = "./login.html"
+                }else if(res.error === 401){
+                    mui.alert('验证码错误，请重新获取')
+                }else if(res.error === 403){
+                    mui.alert(res.message)
+                }
+               
+
+               }
+           });  
+        });
+        // 获取验证码操作。
+        // 通过获取用户手机号码，发送给后端让后端操作向该手机发送短信
+        // 点击验证码按钮，向后端请求数据。拿到数据给返回给前端。
+        $('.btn_getCode').on('click',function(){
+           var code =  $('.phoneNumber').val();
+           if(code === "") return mui.alert('请输入手机号');
+            $.ajax({
+                url:"/node_js/user/vCode",
+                type:"get",
+                data:{
+                    mobile:code
+                },
+                success:function(res){
+                    console.log(res)
+                  mui.alert("验证码为"+res.vCode);
+                }
+            });
+        });
+
+</script>
 </body>
 </html>

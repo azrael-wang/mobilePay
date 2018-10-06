@@ -25,8 +25,8 @@
                     <a class="mui-navigate-right" href="#account">
                         <img class="mui-media-object mui-pull-left head-img" id="head-img" src="../images/user.jpg">
                         <div class="mui-media-body">
-                            Hello MUI
-                            <p class="mui-ellipsis">账号:hellomui</p>
+                            <span class= "uname mui-ellipsis"></span>
+                            <p class="mui-ellipsis">账号:88888888888</p>
                         </div>
                     </a>
                 </li>
@@ -43,7 +43,7 @@
                 </li>
             </ul>
             <div class="p20">
-                <a href="login.html" class="mui-btn btn_outLogin">退出登录</a>
+                <button  class="mui-btn btn_outLogin">退出登录</button >
             </div>
         </div>
         <footer class="cz_tabs">
@@ -57,16 +57,25 @@
     <script src="../js/jquery.min.js"></script>
     <script>
         // 检测用户是否登录
-        $.ajax({
-            url: '/node_js/user/queryUserMessage',
-            type: 'get',
-            success: function (info) {
-                console.log(info);
-                // if(info.error) {
-                //     location.href = './login.html';
-                // }
-            }   
-        });
+            $('.btn_outLogin').on('click',function (){
+                $.ajax({
+                    url:'/node_js/user/logout',
+                    tyep:"get",
+                    success:function(res){
+                        if(res.success){
+                            location.href = "./login.html";
+                        }
+                    }
+                });
+            });
+            $.ajax({
+                url:'/node_js/user/queryUserMessage',
+                type:'get',
+                success:function(res){
+                    if(res.username) return $('.uname').text(res.username);
+                     location.href ="./login.html";
+                }
+            })
     </script>
 </body>
 </html>

@@ -20,35 +20,13 @@
         <span class="title">收货地址管理</span>
     </header>
     <div class="cz_container">
-        <ul class="mui-table-view">
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-right mui-disabled">
-                    <a class="mui-btn mui-btn-red">删除</a>
-                </div>
-                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
-                    <div class="delivery">邮编：<span>100000</span>&nbsp;收货人：<span>黄晓明</span></div>
-                    <div class="address">北京市海淀区西三旗街道经验龙办公楼传智播客教育科技有限公司</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-right mui-disabled">
-                    <a class="mui-btn mui-btn-red">删除</a>
-                </div>
-                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
-                    <div class="delivery">邮编：<span>100000</span>&nbsp;收货人：<span>黄晓明</span></div>
-                    <div class="address">北京市海淀区西三旗街道经验龙办公楼传智播客教育科技有限公司</div>
-                </a>
-            </li>
-            <li class="mui-table-view-cell">
-                <div class="mui-slider-right mui-disabled">
-                    <a class="mui-btn mui-btn-red">删除</a>
-                </div>
-                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
-                    <div class="delivery">邮编：<span>100000</span>&nbsp;收货人：<span>黄晓明</span></div>
-                    <div class="address">北京市海淀区西三旗街道经验龙办公楼传智播客教育科技有限公司</div>
-                </a>
-            </li>
+        <ul class="mui-table-view demo">
+
         </ul>
+        <button class="mui-btn mui-btn-primary btn_add btn_login">新增收货地址</button>
+
+
+
     </div>
     <footer class="cz_tabs">
         <a class="tab_home fa fa-home" href="../index.html"><span>首页</span></a>
@@ -58,5 +36,44 @@
     </footer>
 </div>
 <script src="../res/mui/js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/template-web.js"></script>
+<script src="../js/jquery.region.js"></script>
+<script id = "tpl" type="text/template-web">
+        {{each list val }}
+        <li class="mui-table-view-cell">
+                <div class="mui-slider-right mui-disabled">
+                    <a class="mui-btn mui-btn-red">删除</a>
+                </div>
+                <a href="addressManage.html" class="mui-navigate-right mui-slider-handle">
+                    <div class="delivery">邮编：<span>{{val.postCode}}</span>&nbsp;收货人：<span>{{val.recipients}}</span></div>
+                    <div class="address">{{val.address}} {{val.addressDetail}}</div>
+                </a>
+            </li>
+        {{/each}}
+</script>
+<script>
+    //用户点击按钮时跳转到新增地址页面
+    $('.btn_add').on('click',function (){
+        location.href = "./addressGreate.html";
+    });
+    //初始化收货地址
+    $.ajax({
+        url:'/node_js/address/queryAddress',
+        type:"get",
+        success:function (res){
+            var obj = {
+                list:res
+            }
+            //因为返回的是数组，所以需要自定义一个对象来保存。
+            //因为模版引擎默认只处理对象。
+            var html = template('tpl',{list:res});
+            $('.demo').html(html);
+            console.log(obj)
+        }
+    });
+
+</script>
+
 </body>
 </html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0"/>
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <title>收货地址管理</title>
+    <link type="image/x-icon" rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../res/mui/css/mui.min.css"/>
+    <link rel="stylesheet" href="../res/fontAwesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="../css/common.css"/>
+    <link rel="stylesheet" href="../css/user.css"/>
+</head>
+<body>
+<div class="cz_layout bgg">
+    <header class="cz_topBar">
+        <a href="javascript:history.back();" class="icon_back fa fa-arrow-left"></a>
+        <span class="title">新增地址信息</span>
+    </header>
+    <div class="cz_container">
+            <div class="form_box">
+               <form >
+                        <div class="region">
+                            <select  id="sheng" data-id="">
+                                <option value="">请选择省市</option>
+                            </select>
+                            <select   id="shi" data-id="">
+                                 <option value="">请选择城市</option>
+                            </select>
+                            <select   id="xian" data-id="">
+                                 <option value="">请选择区县</option>
+                            </select>
+                        </div>
+                        <div class="mui-input-row">
+                            <input name="recipients" type="text" placeholder="收货人" >
+                        </div>
+                        <div class="mui-input-row">
+                            <input name="postcode" type="text" placeholder="邮编">
+                        </div>
+                        <div class="mui-input-row">
+                            <textarea name="addressDetail" id="textarea" rows="5" placeholder="详细地址"></textarea>
+                        </div>
+                        <button type="submit" class="mui-btn mui-btn-primary btn_login">确认提交</button>
+               </form>
+            </div>
+    </div>
+    <footer class="cz_tabs">
+        <a class="tab_home fa fa-home" href="../index.html"><span>首页</span></a>
+        <a class="tab_cate fa fa-bars" href="../cate.html"><span>分类</span></a>
+        <a class="tab_cart fa fa-shopping-cart" href="../cart.html"><span>购物车</span></a>
+        <a class="tab_user fa fa-user" href="../user/index.html"><span>会员中心</span></a>
+    </footer>
+</div>
+<script src="../res/mui/js/mui.min.js"></script>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/jquery.region.js"></script>
+    <script>
+        //使用自动生成省市县插件 
+        //该插件需要一个id 和data-id="";自定义属性设置默认值使用
+        $('.region').region({
+            url:"../js/region.json",
+        });
+        
+        //在提交表单数据时提前获取变量的方法是错误的。
+        // var address = $('textarea[name="addressDetail"]').val();
+        // var postcode = $('input[name="postcode"]').val();
+        // var recipients = $('input[name="recipients"]').val();
+        // 数据已经获取到了，但获取的时机不对。刚上来表单是空的，所以你怎么获取都是空的。
+        // 当你点击按钮时，表单中的数据已经有了这时在获取必定是有数据的。
+         // recipients 美 /rɪ'sɪpɪənts/收件人
+        // serialize  美 /'sɪrɪəlaɪz/ 使连续
+        $('form').on('submit',function(e){
+            e.preventDefault();
+            var add = $('input[name="address"]').val();
+            var pc = $('input[name="postcode"]').val();
+            var ad = $('textarea[name="addressDetail"]').val();
+            var rec = $('input[name="recipients"]').val();
+            var data =$(this).serialize();
+            // 在select下拉菜单中的value不等于文本的值。使用.text()可以获取到该值。
+            // 也就是说jq使用.val()获取不到option中的值
+            var sheng = $('#sheng option:selected').text();
+            // var shi = $('#shi option:selected').text();
+            var xian = $('#xian option:selected').text();
+             data += '&address='+sheng+' '+xian;
+            if (add === "") return mui.alert('省市县不能为空,请填写后再次提交');
+            if (rec === "") return mui.alert('收件人不能为空,请填写后再次提交');
+            if (pc === "") return mui.alert('邮件地址不能为空,请填写后再次提交');
+            if (ad === "") return mui.alert('地址信息不能为空,请填写后再次提交');
+            $.ajax({
+           url:"/node_js/address/addAddress",
+           type:"post",
+           data:data,
+           success:function (res){
+               if(res.success) return location.href="./address.html"
+           }
+       });
+        });
+        
+  
+    </script>
+</body>
+</html>
